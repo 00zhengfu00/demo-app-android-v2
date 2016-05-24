@@ -21,13 +21,13 @@ public abstract class BaseActivity extends ActionBarActivity {
 
     protected void onResume() {
         super.onResume();
-        MobclickAgent.onResume(this);
+//        MobclickAgent.onResume(this);
 
     }
 
     protected void onPause() {
         super.onPause();
-        MobclickAgent.onPause(this);
+//        MobclickAgent.onPause(this);
     }
 
 
