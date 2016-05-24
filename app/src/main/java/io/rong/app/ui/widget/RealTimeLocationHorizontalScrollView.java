@@ -5,10 +5,8 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import com.sea_monster.resource.Resource;
-
 import io.rong.app.R;
-import io.rong.imkit.RLog;
+import io.rong.common.RLog;
 import io.rong.imkit.widget.AsyncImageView;
 import io.rong.imlib.model.UserInfo;
 
@@ -16,6 +14,8 @@ import io.rong.imlib.model.UserInfo;
  * Created by zhjchen on 8/12/15.
  */
 public class RealTimeLocationHorizontalScrollView extends RongHorizontalScrollView {
+
+    private final static String TAG = "RealTimeLocationHorizontalScrollView";
 
     private LayoutInflater mInflater;
 
@@ -45,13 +45,13 @@ public class RealTimeLocationHorizontalScrollView extends RongHorizontalScrollVi
 
 
     public void addUserToView(UserInfo userInfo) {
-        RLog.e(this, "RealTimeLocationHorizontalScrollView", "addUserToView:---" + userInfo.getUserId());
+        RLog.e(TAG, "RealTimeLocationHorizontalScrollView addUserToView:---" + userInfo.getUserId());
 
         View view = mInflater.inflate(R.layout.item_horizontal_scroll_view, null);
         AsyncImageView imageView = (AsyncImageView) view.findViewById(android.R.id.icon);
 
         if (null != userInfo.getPortraitUri())
-            imageView.setResource(new Resource(userInfo.getPortraitUri()));
+            imageView.setResource(userInfo.getPortraitUri());
 
         view.setTag(userInfo.getUserId());
 
@@ -59,7 +59,7 @@ public class RealTimeLocationHorizontalScrollView extends RongHorizontalScrollVi
     }
 
     public void removeUserFromView(String userId) {
-        RLog.e(this, "RealTimeLocationHorizontalScrollView", "removeUserFromView:---" + userId);
+        RLog.e(TAG, "RealTimeLocationHorizontalScrollView removeUserFromView:---" + userId);
         View view = getLayoutChileView(userId);
         removeLayoutChildView(view);
     }

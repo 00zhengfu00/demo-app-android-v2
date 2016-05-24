@@ -23,8 +23,9 @@ import io.rong.imkit.model.ConversationKey;
 import io.rong.imkit.model.ConversationProviderTag;
 import io.rong.imkit.model.ProviderTag;
 import io.rong.imkit.model.UIConversation;
-import io.rong.imkit.util.AndroidEmoji;
-import io.rong.imkit.util.RongDateUtils;
+import io.rong.imkit.userInfoCache.RongUserInfoManager;
+import io.rong.imkit.utils.AndroidEmoji;
+import io.rong.imkit.utils.RongDateUtils;
 import io.rong.imkit.widget.provider.IContainerItemProvider;
 import io.rong.imlib.model.MessageContent;
 import io.rong.message.TextMessage;
@@ -170,10 +171,10 @@ public class NewDiscussionConversationProvider implements IContainerItemProvider
     public String getTitle(String s) {
         // TODO Auto-generated method stub
         String name;
-        if (RongContext.getInstance().getDiscussionInfoFromCache(s) == null)
+        if (RongUserInfoManager.getInstance().getDiscussionInfo(s) == null)
             name = RongContext.getInstance().getResources().getString(R.string.de_group_list_default_discussion_name);
         else
-            name = RongContext.getInstance().getDiscussionInfoFromCache(s).getName();
+            name = RongUserInfoManager.getInstance().getDiscussionInfo(s).getName();
         return name;
     }
 

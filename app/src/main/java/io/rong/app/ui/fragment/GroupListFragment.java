@@ -136,7 +136,7 @@ public class GroupListFragment extends BaseFragment implements AdapterView.OnIte
 
                 refreshAdapter();
 
-                RongIM.getInstance().getRongIMClient().joinGroup(result.getId(), result.getName(), new RongIMClient.OperationCallback() {
+                RongIM.getInstance().joinGroup(result.getId(), result.getName(), new RongIMClient.OperationCallback() {
                     @Override
                     public void onSuccess() {
                         if (mDialog != null)

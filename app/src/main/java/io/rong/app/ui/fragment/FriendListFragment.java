@@ -144,37 +144,36 @@ public class FriendListFragment extends Fragment implements SwitchGroup.ItemHand
                 fillData();
 
             } else if (mConversationType.equals(Conversation.ConversationType.DISCUSSION)) {
-                if (RongIM.getInstance() != null && RongIM.getInstance().getRongIMClient() != null)
-                    RongIM.getInstance().getRongIMClient().getDiscussion(mTargetId, new RongIMClient.ResultCallback<Discussion>() {
-                        @Override
-                        public void onSuccess(Discussion discussion) {
+                RongIM.getInstance().getDiscussion(mTargetId, new RongIMClient.ResultCallback<Discussion>() {
+                    @Override
+                    public void onSuccess(Discussion discussion) {
 
-                            isMultiChoice = true;
-                            ArrayList<String> lists = (ArrayList<String>) discussion.getMemberIdList();
-                            for (int i = 0; i < lists.size(); i++) {
-                                mSelectedItemIds.add(lists.get(i));
-                            }
+                        isMultiChoice = true;
+                        ArrayList<String> lists = (ArrayList<String>) discussion.getMemberIdList();
+                        for (int i = 0; i < lists.size(); i++) {
+                            mSelectedItemIds.add(lists.get(i));
+                        }
 
-                            if (mSelectedItemIds != null && isMultiChoice) {
-                                for (String id : mSelectedItemIds) {
-                                    for (Friend friend : mFriendsList) {
-                                        if (id.equals(friend.getUserId())) {
-                                            friend.setSelected(true);
-                                            break;
-                                        }
+                        if (mSelectedItemIds != null && isMultiChoice) {
+                            for (String id : mSelectedItemIds) {
+                                for (Friend friend : mFriendsList) {
+                                    if (id.equals(friend.getUserId())) {
+                                        friend.setSelected(true);
+                                        break;
                                     }
                                 }
                             }
-                            mAdapter = isMultiChoice ? new FriendMultiChoiceAdapter(getActivity(), mFriendsList, mSelectedItemIds) : new FriendListAdapter(getActivity(), mFriendsList);
-                            mListView.setAdapter(mAdapter);
-                            fillData();
                         }
+                        mAdapter = isMultiChoice ? new FriendMultiChoiceAdapter(getActivity(), mFriendsList, mSelectedItemIds) : new FriendListAdapter(getActivity(), mFriendsList);
+                        mListView.setAdapter(mAdapter);
+                        fillData();
+                    }
 
-                        @Override
-                        public void onError(RongIMClient.ErrorCode errorCode) {
+                    @Override
+                    public void onError(RongIMClient.ErrorCode errorCode) {
 
-                        }
-                    });
+                    }
+                });
             }
 
         } else {

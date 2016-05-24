@@ -72,39 +72,37 @@ public class BlackListActivity extends BaseActionBarActivity implements SwitchGr
     private void getBlackList() {
 
         //获取黑名单列表
-        if (RongIM.getInstance() != null && RongIM.getInstance().getRongIMClient() != null) {
-            RongIM.getInstance().getRongIMClient().getBlacklist(new RongIMClient.GetBlacklistCallback() {
-                @Override
-                public void onSuccess(String[] userIds) {
+        RongIM.getInstance().getBlacklist(new RongIMClient.GetBlacklistCallback() {
+            @Override
+            public void onSuccess(String[] userIds) {
 
-                    if (userIds != null) {
-                        mUserInfoList = DemoContext.getInstance().getUserInfoList(userIds);
+                if (userIds != null) {
+                    mUserInfoList = DemoContext.getInstance().getUserInfoList(userIds);
 
-                        mFriendsList = new ArrayList<Friend>();
+                    mFriendsList = new ArrayList<Friend>();
 
-                        if (mUserInfoList != null) {
-                            for (UserInfo userInfo : mUserInfoList) {
-                                Friend friend = new Friend();
-                                friend.setNickname(userInfo.getName());
-                                friend.setPortrait(userInfo.getPortraitUri() + "");
-                                friend.setUserId(userInfo.getUserId());
-                                mFriendsList.add(friend);
-                            }
+                    if (mUserInfoList != null) {
+                        for (UserInfo userInfo : mUserInfoList) {
+                            Friend friend = new Friend();
+                            friend.setNickname(userInfo.getName());
+                            friend.setPortrait(userInfo.getPortraitUri() + "");
+                            friend.setUserId(userInfo.getUserId());
+                            mFriendsList.add(friend);
                         }
-                        mFriendsList = sortFriends(mFriendsList);
-                        mAdapter = new BlackMultiChoiceAdapter(BlackListActivity.this, mFriendsList);
-                        mListView.setAdapter(mAdapter);
-                        mAdapter.setAdapterData(mFriendsList);
-                        mAdapter.notifyDataSetChanged();
-
                     }
-                }
+                    mFriendsList = sortFriends(mFriendsList);
+                    mAdapter = new BlackMultiChoiceAdapter(BlackListActivity.this, mFriendsList);
+                    mListView.setAdapter(mAdapter);
+                    mAdapter.setAdapterData(mFriendsList);
+                    mAdapter.notifyDataSetChanged();
 
-                @Override
-                public void onError(RongIMClient.ErrorCode errorCode) {
                 }
-            });
-        }
+            }
+
+            @Override
+            public void onError(RongIMClient.ErrorCode errorCode) {
+            }
+        });
 
     }
 
@@ -144,7 +142,7 @@ public class BlackListActivity extends BaseActionBarActivity implements SwitchGr
                     switch (i) {
                         case 0:
                             if (RongIM.getInstance() != null)
-                                RongIM.getInstance().getRongIMClient().removeFromBlacklist(viewHolder.friend.getUserId(), new RongIMClient.OperationCallback() {
+                                RongIM.getInstance().removeFromBlacklist(viewHolder.friend.getUserId(), new RongIMClient.OperationCallback() {
                                     @Override
                                     public void onSuccess() {
                                         if (mFriendsList != null) {

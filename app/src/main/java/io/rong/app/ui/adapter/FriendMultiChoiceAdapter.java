@@ -51,8 +51,7 @@ public class FriendMultiChoiceAdapter extends FriendListAdapter {
 
         Resource res = new Resource(friend.getPortrait());
 
-        photo.setDefaultDrawable(mContext.getResources().getDrawable(R.drawable.de_default_portrait));
-        photo.setResource(res);
+        photo.setResource(friend.getPortrait(), R.drawable.de_default_portrait);
 
         String userId = friend.getUserId();
         holder.userId = userId;

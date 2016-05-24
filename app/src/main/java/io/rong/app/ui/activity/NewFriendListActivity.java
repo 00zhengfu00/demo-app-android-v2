@@ -202,22 +202,19 @@ public class NewFriendListActivity extends BaseApiActivity implements Handler.Ca
             UserInfo userInfo = new UserInfo(userid,username,Uri.parse(userportrait));
             //把用户信息设置到消息体中，直接发送给对方，可以不设置，非必选项
             message.setUserInfo(userInfo);
-            if (RongIM.getInstance() != null && RongIM.getInstance().getRongIMClient()!=null) {
+            //发送一条添加成功的自定义消息，此条消息不会在ui上展示
+            RongIM.getInstance().sendMessage(Conversation.ConversationType.PRIVATE, id, message, null, null, new RongIMClient.SendMessageCallback() {
+                @Override
+                public void onError(Integer messageId, RongIMClient.ErrorCode e) {
+                    Log.e(TAG, Constants.DEBUG + "------DeAgreedFriendRequestMessage----onError--");
+                }
 
-                //发送一条添加成功的自定义消息，此条消息不会在ui上展示
-                RongIM.getInstance().getRongIMClient().sendMessage(Conversation.ConversationType.PRIVATE, id, message, null,null, new RongIMClient.SendMessageCallback() {
-                    @Override
-                    public void onError(Integer messageId, RongIMClient.ErrorCode e) {
-                        Log.e(TAG, Constants.DEBUG + "------DeAgreedFriendRequestMessage----onError--");
-                    }
+                @Override
+                public void onSuccess(Integer integer) {
+                    Log.e(TAG, Constants.DEBUG + "------DeAgreedFriendRequestMessage----onSuccess--" + message.getMessage());
 
-                    @Override
-                    public void onSuccess(Integer integer) {
-                        Log.e(TAG, Constants.DEBUG + "------DeAgreedFriendRequestMessage----onSuccess--" + message.getMessage());
-
-                    }
-                });
-            }
+                }
+            });
         }
 
 

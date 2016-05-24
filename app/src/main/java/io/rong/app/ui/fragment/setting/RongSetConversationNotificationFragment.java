@@ -5,7 +5,7 @@ import android.text.TextUtils;
 import android.view.View;
 
 import io.rong.app.R;
-import io.rong.imkit.RLog;
+import io.rong.common.RLog;
 import io.rong.imkit.RongContext;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.fragment.BaseSettingFragment;
@@ -18,6 +18,8 @@ import io.rong.imlib.model.Conversation;
  */
 public class RongSetConversationNotificationFragment extends BaseSettingFragment {
 
+    private final static String TAG = "RongSetConversationNotificationFragment";
+
     public static RongSetConversationNotificationFragment newInstance() {
         return new RongSetConversationNotificationFragment();
     }
@@ -29,24 +31,22 @@ public class RongSetConversationNotificationFragment extends BaseSettingFragment
         if (RongContext.getInstance() != null)
             RongContext.getInstance().getEventBus().register(this);
 
-        if (RongIM.getInstance() != null && RongIM.getInstance().getRongIMClient() != null) {
-            RongIM.getInstance().getRongIMClient().getConversationNotificationStatus(getConversationType(), getTargetId(), new RongIMClient.ResultCallback<Conversation.ConversationNotificationStatus>() {
+        RongIM.getInstance().getConversationNotificationStatus(getConversationType(), getTargetId(), new RongIMClient.ResultCallback<Conversation.ConversationNotificationStatus>() {
 
-                @Override
-                public void onSuccess(final Conversation.ConversationNotificationStatus notificationStatus) {
+            @Override
+            public void onSuccess(final Conversation.ConversationNotificationStatus notificationStatus) {
 
-                    if (notificationStatus != null) {
-                        setSwitchBtnStatus(notificationStatus == Conversation.ConversationNotificationStatus.DO_NOT_DISTURB ? false : true);
-                    }
+                if (notificationStatus != null) {
+                    setSwitchBtnStatus(notificationStatus == Conversation.ConversationNotificationStatus.DO_NOT_DISTURB ? false : true);
                 }
+            }
 
-                @Override
-                public void onError(RongIMClient.ErrorCode errorCode) {
+            @Override
+            public void onError(RongIMClient.ErrorCode errorCode) {
 
-                    setSwitchBtnStatus(!getSwitchBtnStatus());
-                }
-            });
-        }
+                setSwitchBtnStatus(!getSwitchBtnStatus());
+            }
+        });
     }
 
 
@@ -67,7 +67,7 @@ public class RongSetConversationNotificationFragment extends BaseSettingFragment
 
     @Override
     protected void onSettingItemClick(View v) {
-        RLog.i(this, "onSettingItemClick", v.toString());
+        RLog.i(TAG, "onSettingItemClick, " + v.toString());
     }
 
 
@@ -87,14 +87,14 @@ public class RongSetConversationNotificationFragment extends BaseSettingFragment
             status = Conversation.ConversationNotificationStatus.DO_NOT_DISTURB;
         }
 
-        if (getConversationType() != null && !TextUtils.isEmpty(getTargetId()) && RongIM.getInstance() != null && RongIM.getInstance().getRongIMClient() != null) {
+        if (getConversationType() != null && !TextUtils.isEmpty(getTargetId())) {
 
 
-            RongIM.getInstance().getRongIMClient().setConversationNotificationStatus(getConversationType(), getTargetId(), status, new RongIMClient.ResultCallback<Conversation.ConversationNotificationStatus>() {
+            RongIM.getInstance().setConversationNotificationStatus(getConversationType(), getTargetId(), status, new RongIMClient.ResultCallback<Conversation.ConversationNotificationStatus>() {
 
                 @Override
                 public void onSuccess(Conversation.ConversationNotificationStatus status) {
-                    RLog.i(this, "SetConversationNotificationFragment", "onSuccess--");
+                    RLog.i(TAG, "SetConversationNotificationFragment, onSuccess--");
                 }
 
                 @Override
@@ -105,7 +105,7 @@ public class RongSetConversationNotificationFragment extends BaseSettingFragment
             });
 
         } else {
-            RLog.e(this, "SetConversationNotificationFragment", "Arguments is null");
+            RLog.e(TAG, "SetConversationNotificationFragment Arguments is null");
         }
 
     }

@@ -63,22 +63,20 @@ public class RongClearConversationMsgFragment  extends BaseSettingFragment imple
         if (conversation == null)
             return;
 
-        if (RongIM.getInstance() != null && RongIM.getInstance().getRongIMClient() != null) {
-            RongIM.getInstance().getRongIMClient().clearMessages(conversation.getConversationType(), conversation.getTargetId(), new RongIMClient.ResultCallback<Boolean>() {
+        RongIM.getInstance().clearMessages(conversation.getConversationType(), conversation.getTargetId(), new RongIMClient.ResultCallback<Boolean>() {
 
-                @Override
-                public void onSuccess(Boolean aBoolean) {
-                    Log.d("clearMessages", "-----onSuccess-------");
-                    Toast.makeText(getActivity(), getString(R.string.rc_setting_clear_msg_success), Toast.LENGTH_SHORT).show();
-                }
+            @Override
+            public void onSuccess(Boolean aBoolean) {
+                Log.d("clearMessages", "-----onSuccess-------");
+                Toast.makeText(getActivity(), getString(R.string.rc_setting_clear_msg_success), Toast.LENGTH_SHORT).show();
+            }
 
-                @Override
-                public void onError(RongIMClient.ErrorCode e) {
-                    Toast.makeText(getActivity(), getString(R.string.rc_setting_clear_msg_fail), Toast.LENGTH_SHORT).show();
-                }
-            });
-            RongIM.getInstance().getRongIMClient().clearTextMessageDraft(conversation.getConversationType(), conversation.getTargetId(), null);
-        }
+            @Override
+            public void onError(RongIMClient.ErrorCode e) {
+                Toast.makeText(getActivity(), getString(R.string.rc_setting_clear_msg_fail), Toast.LENGTH_SHORT).show();
+            }
+        });
+        RongIM.getInstance().clearTextMessageDraft(conversation.getConversationType(), conversation.getTargetId(), null);
     }
 
     @Override

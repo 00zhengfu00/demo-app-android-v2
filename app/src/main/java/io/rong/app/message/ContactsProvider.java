@@ -100,18 +100,17 @@ public class ContactsProvider extends InputProvider.ExtendProvider {
             String showMessage = contact[0] + "\n" + contact[1];
             final TextMessage content = TextMessage.obtain(showMessage);
 
-            if (RongIM.getInstance().getRongIMClient() != null)
-                RongIM.getInstance().getRongIMClient().sendMessage(getCurrentConversation().getConversationType(), getCurrentConversation().getTargetId(), content, null, null, new RongIMClient.SendMessageCallback() {
-                    @Override
-                    public void onError(Integer integer, RongIMClient.ErrorCode errorCode) {
-                        Log.d("ExtendProvider", "onError--" + errorCode);
-                    }
+            RongIM.getInstance().sendMessage(getCurrentConversation().getConversationType(), getCurrentConversation().getTargetId(), content, null, null, new RongIMClient.SendMessageCallback() {
+                @Override
+                public void onError(Integer integer, RongIMClient.ErrorCode errorCode) {
+                    Log.d("ExtendProvider", "onError--" + errorCode);
+                }
 
-                    @Override
-                    public void onSuccess(Integer integer) {
-                        Log.d("ExtendProvider", "onSuccess--" + integer);
-                    }
-                });
+                @Override
+                public void onSuccess(Integer integer) {
+                    Log.d("ExtendProvider", "onSuccess--" + integer);
+                }
+            });
         }
     }
 

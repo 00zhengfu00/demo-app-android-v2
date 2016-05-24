@@ -54,23 +54,22 @@ public class UpdateDiscussionActivity extends  BaseActionBarActivity{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.icon:
-                if(RongIM.getInstance()!=null && RongIM.getInstance().getRongIMClient() != null)
-                    RongIM.getInstance().getRongIMClient().setDiscussionName(mTargetId,
-                            mNewName.getText().toString(), new RongIMClient.OperationCallback() {
-                        @Override
-                        public void onSuccess() {
-                            WinToast.toast(UpdateDiscussionActivity.this, "讨论组名称修改成功");
-                            Intent intent = new Intent();
-                            intent.putExtra("UPDATA_DISCUSSION_RESULT", mNewName.getText().toString());
-                            setResult(Constants.FIX_DISCUSSION_NAME, intent);
-                            finish();
-                        }
+                RongIM.getInstance().setDiscussionName(mTargetId,
+                        mNewName.getText().toString(), new RongIMClient.OperationCallback() {
+                            @Override
+                            public void onSuccess() {
+                                WinToast.toast(UpdateDiscussionActivity.this, "讨论组名称修改成功");
+                                Intent intent = new Intent();
+                                intent.putExtra("UPDATA_DISCUSSION_RESULT", mNewName.getText().toString());
+                                setResult(Constants.FIX_DISCUSSION_NAME, intent);
+                                finish();
+                            }
 
-                        @Override
-                        public void onError(RongIMClient.ErrorCode errorCode) {
-                            WinToast.toast(UpdateDiscussionActivity.this, "讨论组名称修改失败");
-                        }
-                    });
+                            @Override
+                            public void onError(RongIMClient.ErrorCode errorCode) {
+                                WinToast.toast(UpdateDiscussionActivity.this, "讨论组名称修改失败");
+                            }
+                        });
                 break;
 
             case android.R.id.home:

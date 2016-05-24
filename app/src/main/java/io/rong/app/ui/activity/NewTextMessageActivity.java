@@ -64,7 +64,7 @@ public class NewTextMessageActivity extends BaseApiActivity implements AdapterVi
             mConversationType = Conversation.ConversationType.valueOf(conversationType);
 
             if (mConversationType.equals(Conversation.ConversationType.DISCUSSION)) {
-                RongIM.getInstance().getRongIMClient().getDiscussion(mTargetId, new RongIMClient.ResultCallback<Discussion>() {
+                RongIM.getInstance().getDiscussion(mTargetId, new RongIMClient.ResultCallback<Discussion>() {
                     @Override
                     public void onSuccess(Discussion discussion) {
 

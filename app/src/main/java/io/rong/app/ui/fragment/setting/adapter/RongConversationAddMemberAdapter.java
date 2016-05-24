@@ -71,9 +71,8 @@ public class RongConversationAddMemberAdapter extends BaseAdapter<UserInfo> {
         } else {
             holder.mMemberIcon.setVisibility(View.VISIBLE);
             holder.mMemberDeIcon.setVisibility(View.GONE);
-            holder.mMemberIcon.setDefaultDrawable(v.getContext().getResources().getDrawable(R.drawable.de_default_portrait));
             if (data.getPortraitUri() != null)
-                holder.mMemberIcon.setResource(new Resource(data.getPortraitUri()));
+                holder.mMemberIcon.setResource(data.getPortraitUri().toString(), R.drawable.de_default_portrait);
 
             if (data.getName() != null)
                 holder.mMemberName.setText(data.getName());

@@ -112,7 +112,7 @@ public class LoginActivity extends BaseApiActivity implements View.OnClickListen
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Animation animation = AnimationUtils.loadAnimation(LoginActivity.this, R.anim.translate_anim);
+                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate_anim);
                 mImgBackgroud.startAnimation(animation);
                 mEditPassWordEt.setmOnEditTextFocusChangeListener(LoginActivity.this);
                 mEditUserNameEt.setmOnEditTextFocusChangeListener(LoginActivity.this);
@@ -272,7 +272,7 @@ public class LoginActivity extends BaseApiActivity implements View.OnClickListen
             if (mDialog != null)
                 mDialog.dismiss();
         } else if (mGetMyGroupsRequest != null && mGetMyGroupsRequest.equals(request)) {
-            Log.e(TAG, "-------getGroup failure----");
+            Log.e(TAG, "-------getGroupInfo failure----");
         }
     }
 
@@ -356,7 +356,6 @@ public class LoginActivity extends BaseApiActivity implements View.OnClickListen
                             edit.putString(Constants.APP_USER_ID, userId);
                             edit.apply();
 
-                            RongCloudEvent.getInstance().setOtherListener();
 
                             //请求 demo server 获得自己所加入得群组。
                             mGetMyGroupsRequest = DemoContext.getInstance().getDemoApi().getMyGroups(LoginActivity.this);
@@ -408,31 +407,27 @@ public class LoginActivity extends BaseApiActivity implements View.OnClickListen
 
                     mHandler.obtainMessage(HANDLER_LOGIN_SUCCESS).sendToTarget();
 
-                    if ( RongIM.getInstance() != null && RongIM.getInstance().getRongIMClient() != null) {
-//                    if (grouplist.size() > 0 && RongIM.getInstance() != null && RongIM.getInstance().getRongIMClient() != null) {
+                    final long time1 = System.currentTimeMillis();
+                    RongIM.getInstance().syncGroup(grouplist, new RongIMClient.OperationCallback() {
 
-                        final long time1 = System.currentTimeMillis();
-                        RongIM.getInstance().getRongIMClient().syncGroup(grouplist, new RongIMClient.OperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            Log.i(TAG, "---syncGroup-onSuccess---");
 
-                            @Override
-                            public void onSuccess() {
-                                Log.i(TAG, "---syncGroup-onSuccess---");
+                            long time2 = System.currentTimeMillis() - time1;
 
-                                long time2 = System.currentTimeMillis() - time1;
+                            Log.e(TAG, "-----syncGroup-onSuccess-" + time2);
 
-                                Log.e(TAG, "-----syncGroup-onSuccess-" + time2);
+                        }
 
-                            }
+                        @Override
+                        public void onError(RongIMClient.ErrorCode errorCode) {
+                            Log.e(TAG, "---syncGroup-onError---" + errorCode);
+                            long time2 = System.currentTimeMillis() - time1;
 
-                            @Override
-                            public void onError(RongIMClient.ErrorCode errorCode) {
-                                Log.e(TAG, "---syncGroup-onError---" + errorCode);
-                                long time2 = System.currentTimeMillis() - time1;
-
-                                Log.e(TAG, "-----syncGroup-onError-" + time2);
-                            }
-                        });
-                    }
+                            Log.e(TAG, "-----syncGroup-onError-" + time2);
+                        }
+                    });
                 }
             }
         }

@@ -60,8 +60,7 @@ public class SearchFriendAdapter extends android.widget.BaseAdapter {
 
         if(viewHolder != null) {
             viewHolder.mSearchName.setText(mResults.get(position).getUsername());
-            viewHolder.mImageView.setDefaultDrawable(mContext.getResources().getDrawable(R.drawable.de_default_portrait));
-            viewHolder.mImageView.setResource(res);
+            viewHolder.mImageView.setResource(mResults.get(position).getPortrait(), R.drawable.de_default_portrait);
         }
 
         return convertView;

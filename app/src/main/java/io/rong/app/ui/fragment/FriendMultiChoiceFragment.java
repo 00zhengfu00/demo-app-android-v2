@@ -87,7 +87,7 @@ public class FriendMultiChoiceFragment extends FriendListFragment implements Han
             String conversationType = intent.getStringExtra("DEMO_FRIEND_CONVERSATTIONTYPE").toUpperCase();
             mConversationType = Conversation.ConversationType.valueOf(conversationType);
             if (mConversationType.equals(Conversation.ConversationType.PRIVATE)) {
-                Conversation conversation = RongIM.getInstance().getRongIMClient().getConversation(Conversation.ConversationType.PRIVATE, mTargetId);
+                Conversation conversation = RongIM.getInstance().getConversation(Conversation.ConversationType.PRIVATE, mTargetId);
 
                 if (conversation != null && conversation.getConversationType() != null)
                     mMemberIds.add(conversation.getTargetId());
@@ -123,21 +123,20 @@ public class FriendMultiChoiceFragment extends FriendListFragment implements Han
                 selectButtonShowStyle(1, 0);
 
             } else if (mConversationType.equals(Conversation.ConversationType.DISCUSSION) && mTargetId != null) {
-                if (RongIM.getInstance() != null && RongIM.getInstance().getRongIMClient() != null)
-                    RongIM.getInstance().getRongIMClient().getDiscussion(mTargetId, new RongIMClient.ResultCallback<Discussion>() {
-                        @Override
-                        public void onSuccess(Discussion discussion) {
+                RongIM.getInstance().getDiscussion(mTargetId, new RongIMClient.ResultCallback<Discussion>() {
+                    @Override
+                    public void onSuccess(Discussion discussion) {
 
-                            mNumberLists = (ArrayList<String>) discussion.getMemberIdList();
+                        mNumberLists = (ArrayList<String>) discussion.getMemberIdList();
 
-                            selectButtonShowStyle(mNumberLists.size() - 1, 0);
-                        }
+                        selectButtonShowStyle(mNumberLists.size() - 1, 0);
+                    }
 
-                        @Override
-                        public void onError(RongIMClient.ErrorCode errorCode) {
+                    @Override
+                    public void onError(RongIMClient.ErrorCode errorCode) {
 
-                        }
-                    });
+                    }
+                });
             }
         } else {
             if (mTargetId != null) {
@@ -215,26 +214,25 @@ public class FriendMultiChoiceFragment extends FriendListFragment implements Han
 
                     if (mMemberIds.size() == 1) {
                         Log.e(TAG, "-----selectPeopleComplete---MemberIds.size():" + sb.toString());
-                        if (RongIM.getInstance() != null)
-                            RongIM.getInstance().getRongIMClient().createDiscussion(sb.toString(), ids, new RongIMClient.CreateDiscussionCallback() {
-                                @Override
-                                public void onSuccess(String s) {
-                                    Log.e(TAG, "-----selectPeopleComplete---=＝onSuccess＝＝＝＝＋＋＋＋" + s);
-                                    getActivity().finish();
-                                }
+                        RongIM.getInstance().createDiscussion(sb.toString(), ids, new RongIMClient.CreateDiscussionCallback() {
+                            @Override
+                            public void onSuccess(String s) {
+                                Log.e(TAG, "-----selectPeopleComplete---=＝onSuccess＝＝＝＝＋＋＋＋" + s);
+                                getActivity().finish();
+                            }
 
-                                @Override
-                                public void onError(RongIMClient.ErrorCode e) {
-                                    Log.e(TAG, "-----selectPeopleComplete---=＝onError＝＝＝＝＋＋＋＋" + e);
-                                }
-                            });
+                            @Override
+                            public void onError(RongIMClient.ErrorCode e) {
+                                Log.e(TAG, "-----selectPeopleComplete---=＝onError＝＝＝＝＋＋＋＋" + e);
+                            }
+                        });
 
                     } else {
                         mLoadingDialog.show();
 
                         if (!TextUtils.isEmpty(mTargetId)) {
 
-                            RongIM.getInstance().getRongIMClient().addMemberToDiscussion(mTargetId, ids, new RongIMClient.OperationCallback() {
+                            RongIM.getInstance().addMemberToDiscussion(mTargetId, ids, new RongIMClient.OperationCallback() {
                                 @Override
                                 public void onSuccess() {
                                     if (mLoadingDialog != null) {
@@ -262,7 +260,7 @@ public class FriendMultiChoiceFragment extends FriendListFragment implements Han
 
                         if (!TextUtils.isEmpty(mDiscussionId)) {
 
-                            RongIM.getInstance().getRongIMClient().addMemberToDiscussion(mDiscussionId, ids, new RongIMClient.OperationCallback() {
+                            RongIM.getInstance().addMemberToDiscussion(mDiscussionId, ids, new RongIMClient.OperationCallback() {
                                 @Override
                                 public void onSuccess() {
                                     if (mLoadingDialog != null) {

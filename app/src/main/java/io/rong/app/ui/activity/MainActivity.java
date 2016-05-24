@@ -17,7 +17,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -140,32 +139,29 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             final String conversationType = getIntent().getStringExtra("PUSH_CONVERSATIONTYPE");
             final String targetId = getIntent().getStringExtra("PUSH_TARGETID");
 
-            if (RongIM.getInstance() != null && RongIM.getInstance().getRongIMClient() != null) {
+            RongIM.getInstance().getConversation(Conversation.ConversationType.valueOf(conversationType), targetId, new RongIMClient.ResultCallback<Conversation>() {
+                @Override
+                public void onSuccess(Conversation conversation) {
 
-                RongIM.getInstance().getRongIMClient().getConversation(Conversation.ConversationType.valueOf(conversationType), targetId, new RongIMClient.ResultCallback<Conversation>() {
-                    @Override
-                    public void onSuccess(Conversation conversation) {
+                    if (conversation != null) {
 
-                        if (conversation != null) {
-
-                            if (conversation.getLatestMessage() instanceof ContactNotificationMessage) {
-                                startActivity(new Intent(MainActivity.this, NewFriendListActivity.class));
-                            } else {
-                                Uri uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon().appendPath("conversation")
-                                        .appendPath(conversationType).appendQueryParameter("targetId", targetId).build();
-                                Intent intent = new Intent(Intent.ACTION_VIEW);
-                                intent.setData(uri);
-                                startActivity(intent);
-                            }
+                        if (conversation.getLatestMessage() instanceof ContactNotificationMessage) {
+                            startActivity(new Intent(MainActivity.this, NewFriendListActivity.class));
+                        } else {
+                            Uri uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon().appendPath("conversation")
+                                    .appendPath(conversationType).appendQueryParameter("targetId", targetId).build();
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(uri);
+                            startActivity(intent);
                         }
                     }
+                }
 
-                    @Override
-                    public void onError(RongIMClient.ErrorCode e) {
+                @Override
+                public void onError(RongIMClient.ErrorCode e) {
 
-                    }
-                });
-            }
+                }
+            });
         }
     }
 
@@ -179,29 +175,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             String content = intent.getData().getQueryParameter("pushContent");
             String data = intent.getData().getQueryParameter("pushData");
             String id = intent.getData().getQueryParameter("pushId");
-            RongIMClient.recordNotificationEvent(id);
-            Log.e("RongPushActivity", "--content--" + content + "--data--" + data + "--id--" + id);
-            if (RongIM.getInstance() != null && RongIM.getInstance().getRongIMClient() != null) {
-                RongIM.getInstance().getRongIMClient().clearNotifications();
-            }
+//            RongIMClient.recordNotificationEvent(id);
+//            Log.e("RongPushActivity", "--content--" + content + "--data--" + data + "--id--" + id);
+//            if (RongIM.getInstance() != null && RongIM.getInstance().getRongIMClient() != null) {
+//                RongIM.getInstance().getRongIMClient().clearNotifications();
+//            }
             if (DemoContext.getInstance() != null) {
                 String token = DemoContext.getInstance().getSharedPreferences().getString("DEMO_TOKEN", "default");
                 if (token.equals("default")) {
                     startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 } else {
-                    if (RongIM.getInstance() != null && RongIM.getInstance().getRongIMClient() != null) {
-                        RongIMClient.ConnectionStatusListener.ConnectionStatus status = RongIM.getInstance().getRongIMClient().getCurrentConnectionStatus();
-                        if (RongIMClient.ConnectionStatusListener.ConnectionStatus.CONNECTED.equals(status)) {
-                            return;
-                        } else if (RongIMClient.ConnectionStatusListener.ConnectionStatus.CONNECTING.equals(status)) {
-                            return;
-                        } else {
-                            Intent intent1 = new Intent(MainActivity.this, LoginActivity.class);
-                            intent1.putExtra("PUSH_MESSAGE", true);
-                            startActivity(intent1);
-                            finish();
-                        }
-                    } else {
+                    if (RongIM.getInstance().getCurrentConnectionStatus().equals(RongIMClient.ConnectionStatusListener.ConnectionStatus.DISCONNECTED)) {
                         Intent intent1 = new Intent(MainActivity.this, LoginActivity.class);
                         intent1.putExtra("PUSH_MESSAGE", true);
                         startActivity(intent1);
@@ -448,9 +432,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 break;
 
             case R.id.add_item2://选择群组
+
                 if (RongIM.getInstance() != null)
                     RongIM.getInstance().startSubConversationList(this, Conversation.ConversationType.GROUP);
-
                 break;
             case R.id.add_item3://通讯录
                 startActivity(new Intent(MainActivity.this, ContactsActivity.class));
@@ -487,7 +471,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                             try {
                                 Thread.sleep(500);
                                 Process.killProcess(Process.myPid());
+//                                startActivity(new Intent(MainActivity.this,LoginActivity.class));
+//                                finish();
                             } catch (InterruptedException e) {
+
                                 e.printStackTrace();
                             }
                         }
@@ -506,6 +493,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         return super.onOptionsItemSelected(item);
     }
 
+
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
@@ -521,6 +510,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 public void onClick(DialogInterface dialog, int which) {
                     if (RongIM.getInstance() != null)
                         RongIM.getInstance().disconnect(true);
+                    MainActivity.this.finish();
 
                     try {
                         Thread.sleep(500);

@@ -71,8 +71,7 @@ public abstract class RongBaseSettingFragment extends BaseFragment implements Vi
         mCheckBox.setOnClickListener(this);
         mSettingItem.setOnClickListener(this);
 
-        if(RongIM.getInstance() != null && RongIM.getInstance().getRongIMClient() != null)
-            initData();
+        initData();
 
         super.onActivityCreated(savedInstanceState);
     }

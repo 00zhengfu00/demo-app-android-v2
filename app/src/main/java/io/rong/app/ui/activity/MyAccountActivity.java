@@ -51,7 +51,7 @@ public class MyAccountActivity extends BaseActionBarActivity  {
         if (DemoContext.getInstance().getSharedPreferences() != null) {
             mUserName = DemoContext.getInstance().getSharedPreferences().getString(Constants.APP_USER_NAME, null);
             String userPortrait = DemoContext.getInstance().getSharedPreferences().getString("DEMO_USER_PORTRAIT", null);
-            mImgMyPortrait.setResource(new Resource(Uri.parse(userPortrait)));
+            mImgMyPortrait.setResource(Uri.parse(userPortrait));
             mTVUsername.setText(mUserName.toString());
         }
 

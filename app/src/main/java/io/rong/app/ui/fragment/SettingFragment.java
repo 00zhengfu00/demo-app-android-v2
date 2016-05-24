@@ -101,7 +101,7 @@ public class SettingFragment extends DispatchResultFragment implements View.OnCl
         if (mConversationType.equals(Conversation.ConversationType.DISCUSSION)) {
             mDeleteBtn.setVisibility(View.VISIBLE);
             mChatRoomRel.setVisibility(View.VISIBLE);
-            RongIM.getInstance().getRongIMClient().getDiscussion(targetId, new RongIMClient.ResultCallback<Discussion>() {
+            RongIM.getInstance().getDiscussion(targetId, new RongIMClient.ResultCallback<Discussion>() {
                 @Override
                 public void onSuccess(Discussion discussion) {
                     mDiscussionName = discussion.getName();
@@ -153,30 +153,29 @@ public class SettingFragment extends DispatchResultFragment implements View.OnCl
         switch (view.getId()) {
             case R.id.de_fr_delete:
 
-                if (RongIM.getInstance() != null && RongIM.getInstance().getRongIMClient() != null)
-                    RongIM.getInstance().getRongIMClient().quitDiscussion(targetId, new RongIMClient.OperationCallback() {
-                        @Override
-                        public void onSuccess() {
-                            RongIM.getInstance().getRongIMClient().removeConversation(Conversation.ConversationType.DISCUSSION, targetId, new RongIMClient.ResultCallback<Boolean>() {
-                                @Override
-                                public void onSuccess(Boolean aBoolean) {
+                RongIM.getInstance().quitDiscussion(targetId, new RongIMClient.OperationCallback() {
+                    @Override
+                    public void onSuccess() {
+                        RongIM.getInstance().removeConversation(Conversation.ConversationType.DISCUSSION, targetId, new RongIMClient.ResultCallback<Boolean>() {
+                            @Override
+                            public void onSuccess(Boolean aBoolean) {
 
-                                    startActivity(new Intent(getActivity(), MainActivity.class));
-                                    getActivity().finish();
-                                }
+                                startActivity(new Intent(getActivity(), MainActivity.class));
+                                getActivity().finish();
+                            }
 
-                                @Override
-                                public void onError(RongIMClient.ErrorCode errorCode) {
+                            @Override
+                            public void onError(RongIMClient.ErrorCode errorCode) {
 
-                                }
-                            });
-                        }
+                            }
+                        });
+                    }
 
-                        @Override
-                        public void onError(RongIMClient.ErrorCode errorCode) {
+                    @Override
+                    public void onError(RongIMClient.ErrorCode errorCode) {
 
-                        }
-                    });
+                    }
+                });
                 break;
             case R.id.de_set_chatroom_name:
                 Intent intent = new Intent(getActivity(), UpdateDiscussionActivity.class);

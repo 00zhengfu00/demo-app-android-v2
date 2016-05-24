@@ -73,7 +73,7 @@ public abstract class LocationMapActivity extends BasicMapActivity implements AM
             locImageView.setImageResource(R.drawable.rc_rt_loc_other);
         }
 
-        imageView.setResource(new Resource(url));
+        imageView.setResource(url, 0);
 
         markerOption.anchor(0.5f, 0.5f).icon(BitmapDescriptorFactory.fromView(view));
 

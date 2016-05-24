@@ -73,7 +73,7 @@ public class DisturbActivity extends BaseActionBarActivity implements View.OnCli
         if (DemoContext.getInstance() == null)
             return;
 
-        if (RongIM.getInstance() == null || RongIM.getInstance().getRongIMClient() == null) {
+        if (RongIM.getInstance().getCurrentConnectionStatus().equals(RongIMClient.ConnectionStatusListener.ConnectionStatus.DISCONNECTED)) {
             Log.e(TAG, "--connect 成功后调用--");
             return;
         }
@@ -84,7 +84,7 @@ public class DisturbActivity extends BaseActionBarActivity implements View.OnCli
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    RongIM.getInstance().getRongIMClient().getNotificationQuietHours(new RongIMClient.GetNotificationQuietHoursCallback() {
+                    RongIM.getInstance().getNotificationQuietHours(new RongIMClient.GetNotificationQuietHoursCallback() {
                         @Override
                         public void onSuccess(String startTime, int spanMins) {
                             if (spanMins > 0) {
@@ -196,7 +196,7 @@ public class DisturbActivity extends BaseActionBarActivity implements View.OnCli
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                RongIM.getInstance().getRongIMClient().removeNotificationQuietHours(new RongIMClient.OperationCallback() {
+                                RongIM.getInstance().removeNotificationQuietHours(new RongIMClient.OperationCallback() {
                                     @Override
                                     public void onSuccess() {
                                         Message msg = Message.obtain();
@@ -248,12 +248,12 @@ public class DisturbActivity extends BaseActionBarActivity implements View.OnCli
      */
     private void setConversationTime(final String startTime, final int spanMins) {
 
-        if (RongIM.getInstance() != null && RongIM.getInstance().getRongIMClient() != null && !TextUtils.isEmpty(startTime)) {
+        if (RongIM.getInstance() != null && !TextUtils.isEmpty(startTime)) {
 
             if (spanMins > 0 && spanMins < 1440) {
                 Log.e("", "----设置勿扰时间startTime；" + startTime + "---spanMins:" + spanMins);
 
-                RongIM.getInstance().getRongIMClient().setNotificationQuietHours(startTime, spanMins, new RongIMClient.OperationCallback() {
+                RongIM.getInstance().setNotificationQuietHours(startTime, spanMins, new RongIMClient.OperationCallback() {
 
                     @Override
                     public void onSuccess() {

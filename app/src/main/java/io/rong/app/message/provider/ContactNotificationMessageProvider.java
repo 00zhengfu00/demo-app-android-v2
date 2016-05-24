@@ -13,11 +13,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import io.rong.app.R;
-import io.rong.imkit.RongContext;
 import io.rong.imkit.RongIM;
-import io.rong.imkit.model.ConversationKey;
 import io.rong.imkit.model.ProviderTag;
 import io.rong.imkit.model.UIMessage;
+import io.rong.imkit.userInfoCache.RongUserInfoManager;
 import io.rong.imkit.widget.ArraysDialogFragment;
 import io.rong.imkit.widget.provider.IContainerItemProvider;
 import io.rong.imlib.model.Conversation;
@@ -58,12 +57,16 @@ public class ContactNotificationMessageProvider extends IContainerItemProvider.M
         String name = null;
         if (message.getConversationType().getName().equals(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName()) ||
                 message.getConversationType().getName().equals(Conversation.ConversationType.PUBLIC_SERVICE.getName())) {
-            ConversationKey key = ConversationKey.obtain(message.getTargetId(), message.getConversationType());
-            PublicServiceProfile info = RongContext.getInstance().getPublicServiceInfoCache().get(key.getKey());
-            if (info != null)
-                name = info.getName();
+            if (message.getUserInfo() != null) {
+                name = message.getUserInfo().getName();
+            } else {
+                Conversation.PublicServiceType publicServiceType = Conversation.PublicServiceType.setValue(message.getConversationType().getValue());
+                PublicServiceProfile info = RongUserInfoManager.getInstance().getPublicServiceProfile(publicServiceType, message.getTargetId());
+                if (info != null)
+                    name = info.getName();
+            }
         } else {
-            UserInfo userInfo = RongContext.getInstance().getUserInfoCache().get(message.getSenderUserId());
+            UserInfo userInfo = RongUserInfoManager.getInstance().getUserInfo(message.getSenderUserId());
             if (userInfo != null)
                 name = userInfo.getName();
         }
@@ -75,7 +78,7 @@ public class ContactNotificationMessageProvider extends IContainerItemProvider.M
             @Override
             public void OnArraysDialogItemClick(DialogInterface dialog, int which) {
                 if (which == 0)
-                    RongIM.getInstance().getRongIMClient().deleteMessages(new int[]{message.getMessageId()}, null);
+                    RongIM.getInstance().deleteMessages(new int[]{message.getMessageId()}, null);
 
             }
         }).show(((FragmentActivity) view.getContext()).getSupportFragmentManager());

@@ -35,16 +35,17 @@ public class ContactsMultiChoiceAdapter extends ContactsAdapter {
         name.setText(friend.getNickname());
 
         Resource res = new Resource(friend.getPortrait());
+        int defaultId;
         if(friend.getUserId().equals("★001")){
-            photo.setDefaultDrawable(mContext.getResources().getDrawable(R.drawable.de_address_new_friend));
+            defaultId = R.drawable.de_address_new_friend;
         }else if(friend.getUserId().equals("★002")){
-            photo.setDefaultDrawable(mContext.getResources().getDrawable(R.drawable.de_address_group));
+            defaultId = R.drawable.de_address_group;
         }else if(friend.getUserId().equals("★003")){
-            photo.setDefaultDrawable(mContext.getResources().getDrawable(R.drawable.de_address_public));
+            defaultId = R.drawable.de_address_public;
         }else{
-            photo.setDefaultDrawable(mContext.getResources().getDrawable(R.drawable.de_default_portrait));
+            defaultId = R.drawable.de_default_portrait;
         }
-        photo.setResource(res);
+        photo.setResource(friend.getPortrait(), defaultId);
 
         String userId = friend.getUserId();
         holder.userId = userId;

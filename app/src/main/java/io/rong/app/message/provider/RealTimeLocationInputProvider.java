@@ -7,9 +7,9 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 
-import de.greenrobot.event.EventBus;
 import io.rong.app.ui.activity.RealTimeLocationActivity;
 import io.rong.app.model.RongEvent;
+import io.rong.eventbus.EventBus;
 import io.rong.imkit.RongContext;
 import io.rong.imkit.widget.ArraysDialogFragment;
 import io.rong.imkit.widget.provider.LocationInputProvider;

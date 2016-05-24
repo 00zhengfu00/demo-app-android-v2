@@ -87,7 +87,7 @@ public class BlackListAdapter extends PinnedHeaderAdapter<Friend> implements Fil
 
         Resource res = new Resource(friend.getPortrait());
 
-        photo.setResource(res);
+        photo.setResource(friend.getPortrait(), 0);
 
         photo.setTag(position);
         holder.friend = friend;

@@ -47,15 +47,14 @@ public class ConversationListActivity extends BaseApiActivity {
             //通过intent.getData().getQueryParameter("push") 为true，判断是否是push消息
             if (intent.getData().getQueryParameter("push").equals("true")) {
                 String id = intent.getData().getQueryParameter("pushId");
-                RongIM.getInstance().getRongIMClient().recordNotificationEvent(id);
+//                RongIM.getInstance().getRongIMClient().recordNotificationEvent(id);
 
                 enterActivity();
             }
 
         } else {//通知过来
             //程序切到后台，收到消息后点击进入,会执行这里
-            if (RongIM.getInstance() == null || RongIM.getInstance().getRongIMClient() == null) {
-
+            if (RongIM.getInstance().getCurrentConnectionStatus().equals(RongIMClient.ConnectionStatusListener.ConnectionStatus.DISCONNECTED)) {
                 enterActivity();
             } else {
                 startActivity(new Intent(ConversationListActivity.this, MainActivity.class));
@@ -111,8 +110,6 @@ public class ConversationListActivity extends BaseApiActivity {
             @Override
             public void onSuccess(String s) {
                 Log.i(TAG, "---onSuccess--" + s);
-                if (RongCloudEvent.getInstance() != null)
-                    RongCloudEvent.getInstance().setOtherListener();
 
                 if (DemoContext.getInstance() != null)
                     mGetMyGroupsRequest = DemoContext.getInstance().getDemoApi().getMyGroups(ConversationListActivity.this);
@@ -156,7 +153,7 @@ public class ConversationListActivity extends BaseApiActivity {
                         DemoContext.getInstance().setGroupMap(groupM);
 
                     if (grouplist.size() > 0)
-                        RongIM.getInstance().getRongIMClient().syncGroup(grouplist, new RongIMClient.OperationCallback() {
+                        RongIM.getInstance().syncGroup(grouplist, new RongIMClient.OperationCallback() {
                             @Override
                             public void onSuccess() {
                                 Log.e(TAG, "---syncGroup-onSuccess---");

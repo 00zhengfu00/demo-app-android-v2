@@ -21,7 +21,7 @@ public class SubConversationListActivity extends BaseActionBarActivity {
 
         setContentView(R.layout.rong_activity);
         SubConversationListFragment fragment = new SubConversationListFragment();
-        fragment.setAdapter(new SubConversationListAdapterEx(RongContext.getInstance()));
+        fragment.setAdapter(new SubConversationListAdapterEx(getApplicationContext()));
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.add(R.id.rong_content, fragment);
         transaction.commit();

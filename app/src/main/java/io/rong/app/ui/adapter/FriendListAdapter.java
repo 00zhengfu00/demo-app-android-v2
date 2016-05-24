@@ -95,9 +95,7 @@ public class FriendListAdapter extends PinnedHeaderAdapter<Friend> implements Fi
 
         name.setText(friend.getNickname());
 
-        Resource res = new Resource(friend.getPortrait());
-
-        photo.setResource(res);
+        photo.setResource(friend.getPortrait(), 0);
 
         photo.setTag(position);
 

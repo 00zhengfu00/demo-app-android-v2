@@ -124,7 +124,7 @@ public class PersonalDetailActivity extends BaseApiActivity {
                     mAddFriend.setVisibility(View.VISIBLE);
                     mSendMessage.setVisibility(View.GONE);
                 }
-                mPersonalImg.setResource(new Resource(userInfo.getPortraitUri()));
+                mPersonalImg.setResource(userInfo.getPortraitUri());
                 mPersonalName.setText(userInfo.getName());
             }
         } else if (getIntent().hasExtra("CONTACTS_USER")) {
@@ -132,7 +132,7 @@ public class PersonalDetailActivity extends BaseApiActivity {
             currentUserId = getIntent().getStringExtra("CONTACTS_USER");
 
             userInfo = DemoContext.getInstance().getUserInfoById(currentUserId);
-            mPersonalImg.setResource(new Resource(userInfo.getPortraitUri()));
+            mPersonalImg.setResource(userInfo.getPortraitUri());
             mPersonalName.setText(userInfo.getName());
             mPersonalId.setText("Id:" + userInfo.getUserId());
             mAddFriend.setVisibility(View.GONE);
@@ -141,7 +141,7 @@ public class PersonalDetailActivity extends BaseApiActivity {
             isSearch = getIntent().getBooleanExtra("USER_SEARCH", false);
             mAddFriend.setVisibility(View.VISIBLE);
             mSendMessage.setVisibility(View.GONE);
-            mPersonalImg.setResource(new Resource(userInfo.getPortraitUri()));
+            mPersonalImg.setResource(userInfo.getPortraitUri());
             mPersonalName.setText(userInfo.getName());
             currentUserId = userInfo.getUserId();
         }
@@ -161,7 +161,7 @@ public class PersonalDetailActivity extends BaseApiActivity {
                     WinToast.toast(this, "删除好友成功");
                     if (DemoContext.getInstance() != null && currentUserId != null) {
                         //删除好友成功后，将这个好友的会话从会话列表删除
-                        RongIM.getInstance().getRongIMClient().removeConversation(Conversation.ConversationType.PRIVATE, currentUserId);
+                        RongIM.getInstance().removeConversation(Conversation.ConversationType.PRIVATE, currentUserId);
                         DemoContext.getInstance().updateUserInfos(currentUserId, "2");
 
                         Intent intent = new Intent();
@@ -230,8 +230,8 @@ public class PersonalDetailActivity extends BaseApiActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.per_item1://加入黑名单
-                if (DemoContext.getInstance() != null && RongIM.getInstance().getRongIMClient() != null && currentUserId != null) {
-                    RongIM.getInstance().getRongIMClient().addToBlacklist(currentUserId, new RongIMClient.OperationCallback() {
+                if (DemoContext.getInstance() != null && currentUserId != null) {
+                    RongIM.getInstance().addToBlacklist(currentUserId, new RongIMClient.OperationCallback() {
                         @Override
                         public void onSuccess() {
                             WinToast.toast(PersonalDetailActivity.this, "加入黑名单成功");

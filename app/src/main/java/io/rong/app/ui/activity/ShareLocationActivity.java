@@ -91,7 +91,7 @@ public class ShareLocationActivity extends Activity implements LocationSource, A
     private void addMarker(LatLng latLng, String url) {
         AsyncImageView imageView = (AsyncImageView) LayoutInflater.from(this).inflate(R.layout.map_marker_view, null);
 //        AsyncImageView imageView = (AsyncImageView) view.findViewById(R.id.icon);
-        imageView.setResource(new Resource(url));
+        imageView.setResource(url, 0);
 
 //        aMap.addMarker(new MarkerOptions().anchor(0.5f, 0.5f)
 //                .position(new LatLng(30.679879, 104.064855)).title("成都市")

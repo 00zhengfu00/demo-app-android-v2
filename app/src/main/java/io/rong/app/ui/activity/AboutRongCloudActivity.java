@@ -8,12 +8,19 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import io.rong.app.R;
+import io.rong.imkit.RongIM;
+import io.rong.imlib.RongIMClient;
+import io.rong.imlib.model.Conversation;
+import io.rong.imlib.model.Message;
+import io.rong.message.TextMessage;
 
 /**
  * Created by Administrator on 2015/3/3.
  */
-public class AboutRongCloudActivity extends BaseActionBarActivity {
+public class AboutRongCloudActivity extends BaseActionBarActivity  {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +37,8 @@ public class AboutRongCloudActivity extends BaseActionBarActivity {
         mUpdateLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(AboutRongCloudActivity.this, UpdateLogActivity.class));
+                insetMess();
+//                startActivity(new Intent(AboutRongCloudActivity.this, UpdateLogActivity.class));
             }
         });
         mFunctionIntroduce.setOnClickListener(new View.OnClickListener() {
@@ -56,6 +64,21 @@ public class AboutRongCloudActivity extends BaseActionBarActivity {
         mCurrentVersion.setText(versionInfo[1]);
     }
 
+    private void insetMess() {
+        RongIM.getInstance().getRongIMClient().insertMessage(Conversation.ConversationType.PRIVATE, "22309", "22308", TextMessage.obtain("hello"), new RongIMClient.ResultCallback<Message>() {
+            @Override
+            public void onSuccess(Message message) {
+
+            }
+
+            @Override
+            public void onError(RongIMClient.ErrorCode e) {
+
+            }
+        });
+
+    }
+
     private String[] getVersionInfo() {
         String[] version = new String[2];
 
@@ -72,4 +95,6 @@ public class AboutRongCloudActivity extends BaseActionBarActivity {
 
         return version;
     }
+
+
 }

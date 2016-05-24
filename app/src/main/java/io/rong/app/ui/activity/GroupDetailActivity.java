@@ -168,17 +168,8 @@ public class GroupDetailActivity extends BaseApiActivity implements View.OnClick
 
             case R.id.chat_group:
                 if (RongIM.getInstance() != null)
-                    RongIM.getInstance().getRongIMClient().joinGroup(mApiResult.getId(), mApiResult.getName(), new RongIMClient.OperationCallback() {
-                        @Override
-                        public void onSuccess() {
-                            RongIM.getInstance().startGroupChat(GroupDetailActivity.this, mApiResult.getId(), mApiResult.getName());
 
-                        }
-
-                        @Override
-                        public void onError(RongIMClient.ErrorCode errorCode) {
-                        }
-                    });
+                    RongIM.getInstance().startGroupChat(GroupDetailActivity.this, mApiResult.getId(), mApiResult.getName());
 
                 break;
         }
@@ -188,7 +179,7 @@ public class GroupDetailActivity extends BaseApiActivity implements View.OnClick
     @Override
     public void onCallApiSuccess(AbstractHttpRequest request, Object obj) {
 
-        if (mJoinRequest!=null && mJoinRequest.equals(request)) {
+        if (mJoinRequest != null && mJoinRequest.equals(request)) {
             if (obj instanceof Status) {
                 final Status status = (Status) obj;
                 if (status.getCode() == 200 && mApiResult != null) {
@@ -197,7 +188,7 @@ public class GroupDetailActivity extends BaseApiActivity implements View.OnClick
                     GroupListFragment.setGroupMap(mApiResult, 1);
 
                     if (RongIM.getInstance() != null)
-                        RongIM.getInstance().getRongIMClient().joinGroup(mApiResult.getId(), mApiResult.getName(), new RongIMClient.OperationCallback() {
+                        RongIM.getInstance().joinGroup(mApiResult.getId(), mApiResult.getName(), new RongIMClient.OperationCallback() {
                             @Override
                             public void onSuccess() {
 
@@ -207,6 +198,7 @@ public class GroupDetailActivity extends BaseApiActivity implements View.OnClick
                                 RongIM.getInstance().startGroupChat(GroupDetailActivity.this, mApiResult.getId(), mApiResult.getName());
 
                             }
+
                             @Override
                             public void onError(RongIMClient.ErrorCode errorCode) {
                             }
@@ -217,7 +209,7 @@ public class GroupDetailActivity extends BaseApiActivity implements View.OnClick
                     this.setResult(Constants.GROUP_JOIN_REQUESTCODE, intent);
                 }
             }
-        } else if (mQuitRequest!=null &&mQuitRequest.equals(request)) {
+        } else if (mQuitRequest != null && mQuitRequest.equals(request)) {
             if (obj instanceof Status) {
                 final Status status = (Status) obj;
                 if (status.getCode() == 200) {
@@ -228,23 +220,21 @@ public class GroupDetailActivity extends BaseApiActivity implements View.OnClick
                     mess.what = NO_JOIN;
                     mHandler.sendMessage(mess);
 
-                    if (RongIM.getInstance() != null && RongIM.getInstance().getRongIMClient()!=null) {
-                        RongIM.getInstance().getRongIMClient().quitGroup(mApiResult.getId(), new RongIMClient.OperationCallback() {
-                            @Override
-                            public void onSuccess() {
-                                WinToast.toast(GroupDetailActivity.this, R.string.group_quit_success);
-                                Intent intent = new Intent();
-                                intent.putExtra("result", DemoContext.getInstance().getGroupMap());
-                                GroupDetailActivity.this.setResult(Constants.GROUP_QUIT_REQUESTCODE, intent);
-                                Log.e(TAG, "-----------quit success ----");
-                            }
+                    RongIM.getInstance().quitGroup(mApiResult.getId(), new RongIMClient.OperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            WinToast.toast(GroupDetailActivity.this, R.string.group_quit_success);
+                            Intent intent = new Intent();
+                            intent.putExtra("result", DemoContext.getInstance().getGroupMap());
+                            GroupDetailActivity.this.setResult(Constants.GROUP_QUIT_REQUESTCODE, intent);
+                            Log.e(TAG, "-----------quit success ----");
+                        }
 
-                            @Override
-                            public void onError(RongIMClient.ErrorCode errorCode) {
+                        @Override
+                        public void onError(RongIMClient.ErrorCode errorCode) {
 
-                            }
-                        });
-                    }
+                        }
+                    });
                 }
             }
         }
@@ -253,12 +243,12 @@ public class GroupDetailActivity extends BaseApiActivity implements View.OnClick
     @Override
     public void onCallApiFailure(AbstractHttpRequest request, BaseException e) {
 
-        if(mQuitRequest!=null && mQuitRequest.equals(request)){
+        if (mQuitRequest != null && mQuitRequest.equals(request)) {
 
             if (mDialog != null)
                 mDialog.dismiss();
 
-        }else if(mJoinRequest!=null && mJoinRequest.equals(request)){
+        } else if (mJoinRequest != null && mJoinRequest.equals(request)) {
 
             if (mDialog != null)
                 mDialog.dismiss();

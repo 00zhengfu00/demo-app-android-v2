@@ -24,21 +24,19 @@ public class RongSetConversationToTopFragment extends RongBaseSettingFragment {
         if (RongContext.getInstance() != null)
             RongContext.getInstance().getEventBus().register(this);
 
-        if (RongIM.getInstance() != null && RongIM.getInstance().getRongIMClient() != null) {
-            RongIM.getInstance().getRongIMClient().getConversation(getConversationType(), getTargetId(), new RongIMClient.ResultCallback<Conversation>() {
+        RongIM.getInstance().getConversation(getConversationType(), getTargetId(), new RongIMClient.ResultCallback<Conversation>() {
 
-                @Override
-                public void onSuccess(final Conversation conversation) {
-                    if (conversation != null)
-                        setSwitchBtnStatus(conversation.isTop());
-                }
+            @Override
+            public void onSuccess(final Conversation conversation) {
+                if (conversation != null)
+                    setSwitchBtnStatus(conversation.isTop());
+            }
 
-                @Override
-                public void onError(RongIMClient.ErrorCode e) {
+            @Override
+            public void onError(RongIMClient.ErrorCode e) {
 
-                }
-            });
-        }
+            }
+        });
     }
 
     @Override
@@ -69,7 +67,7 @@ public class RongSetConversationToTopFragment extends RongBaseSettingFragment {
     protected void toggleSwitch(boolean toggle) {
 
         if (getConversationType() != null && !TextUtils.isEmpty(getTargetId())) {
-            RongIM.getInstance().getRongIMClient().setConversationToTop(getConversationType(), getTargetId(), toggle,null);
+            RongIM.getInstance().setConversationToTop(getConversationType(), getTargetId(), toggle,null);
         }
 
     }

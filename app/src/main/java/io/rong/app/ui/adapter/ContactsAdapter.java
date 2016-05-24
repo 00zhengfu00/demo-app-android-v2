@@ -92,7 +92,7 @@ public class ContactsAdapter extends PinnedHeaderAdapter<Friend> implements Filt
 
         Resource res = new Resource(friend.getPortrait());
 
-        photo.setResource(res);
+        photo.setResource(friend.getPortrait(), 0);
 
         photo.setTag(position);
 

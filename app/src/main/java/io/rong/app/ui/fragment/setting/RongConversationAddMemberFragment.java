@@ -18,6 +18,7 @@ import io.rong.app.ui.fragment.setting.adapter.RongConversationAddMemberAdapter;
 import io.rong.imkit.RongContext;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.fragment.BaseFragment;
+import io.rong.imkit.userInfoCache.RongUserInfoManager;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.Discussion;
@@ -59,10 +60,7 @@ public class RongConversationAddMemberFragment extends BaseFragment implements  
         }
         mAdapter = new RongConversationAddMemberAdapter(getActivity());
         mAdapter.setDeleteIconListener(this);
-
-        if (RongIM.getInstance() != null && RongIM.getInstance().getRongIMClient() != null) {
-            initData();
-        }
+        initData();
     }
 
     @Override
@@ -85,7 +83,7 @@ public class RongConversationAddMemberFragment extends BaseFragment implements  
                     UserInfo addBtn = new UserInfo("RongAddBtn", null, null);
                     mAdapter.add(addBtn);
 
-                    String curUserId = RongIM.getInstance().getRongIMClient().getCurrentUserId();
+                    String curUserId = RongIM.getInstance().getCurrentUserId();
                     if (mAdapter.getCreatorId() != null && mConversationType.equals(Conversation.ConversationType.DISCUSSION) && curUserId.equals(mAdapter.getCreatorId())) {
                         UserInfo deleteBtn = new UserInfo("RongDelBtn", null, null);
                         mAdapter.add(deleteBtn);
@@ -103,7 +101,7 @@ public class RongConversationAddMemberFragment extends BaseFragment implements  
 
     private void initData() {
         if (mConversationType.equals(Conversation.ConversationType.DISCUSSION)) {
-            RongIM.getInstance().getRongIMClient().getDiscussion(mTargetId, new RongIMClient.ResultCallback<Discussion>() {
+            RongIM.getInstance().getDiscussion(mTargetId, new RongIMClient.ResultCallback<Discussion>() {
                 @Override
                 public void onSuccess(Discussion discussion) {
                     mIdList = discussion.getMemberIdList();
@@ -162,7 +160,7 @@ public class RongConversationAddMemberFragment extends BaseFragment implements  
     @Override
     public void onDeleteIconClick(View view, final int position) {
         UserInfo temp = mAdapter.getItem(position);
-        RongIM.getInstance().getRongIMClient().removeMemberFromDiscussion(mTargetId, temp.getUserId(), new RongIMClient.OperationCallback() {
+        RongIM.getInstance().removeMemberFromDiscussion(mTargetId, temp.getUserId(), new RongIMClient.OperationCallback() {
             @Override
             public void onSuccess() {
                 Message msg = new Message();
@@ -186,7 +184,7 @@ public class RongConversationAddMemberFragment extends BaseFragment implements  
                 int i = 0;
                 for (String id : mMemberInfo) {
                     if (i < 50) {
-                        UserInfo userInfo = RongContext.getInstance().getUserInfoFromCache(id);
+                        UserInfo userInfo = RongUserInfoManager.getInstance().getUserInfo(id);
                         if (userInfo == null) {
                             mMembers.add(new UserInfo(id, null, null));
                         } else
@@ -200,7 +198,7 @@ public class RongConversationAddMemberFragment extends BaseFragment implements  
                 UserInfo addBtn = new UserInfo("RongAddBtn", null, null);
                 mMembers.add(addBtn);
 
-                String curUserId = RongIM.getInstance().getRongIMClient().getCurrentUserId();
+                String curUserId = RongIM.getInstance().getCurrentUserId();
                 if (mAdapter.getCreatorId() != null && mConversationType.equals(Conversation.ConversationType.DISCUSSION) && curUserId.equals(mAdapter.getCreatorId())) {
                     UserInfo deleteBtn = new UserInfo("RongDelBtn", null, null);
                     mMembers.add(deleteBtn);

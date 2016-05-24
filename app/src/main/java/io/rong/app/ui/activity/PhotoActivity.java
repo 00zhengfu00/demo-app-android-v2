@@ -14,11 +14,9 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 
 import io.rong.app.R;
+import io.rong.imageloader.core.ImageLoader;
 import io.rong.imkit.tools.PhotoFragment;
 
-/**
- * Created by DragonJ on 15/4/13.
- */
 public class PhotoActivity extends BaseActionBarActivity {
     PhotoFragment mPhotoFragment;
     Uri mUri;
@@ -29,7 +27,7 @@ public class PhotoActivity extends BaseActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.de_ac_photo);
 
-        mPhotoFragment = (PhotoFragment)getSupportFragmentManager().findFragmentById(R.id.photo_fragment);
+        mPhotoFragment = (PhotoFragment) getSupportFragmentManager().findFragmentById(R.id.photo_fragment);
         Uri uri = getIntent().getParcelableExtra("photo");
         Uri thumbUri = getIntent().getParcelableExtra("thumbnail");
 
@@ -43,14 +41,14 @@ public class PhotoActivity extends BaseActionBarActivity {
 
                 @Override
                 public void onDownloadError() {
-
+                    Toast.makeText(PhotoActivity.this, io.rong.imkit.R.string.rc_notice_download_fail, Toast.LENGTH_SHORT).show();
                 }
             });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(mUri != null && mUri.getScheme() != null && mUri.getScheme().startsWith("http")) {
+        if (mUri != null && mUri.getScheme() != null && mUri.getScheme().startsWith("http")) {
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.de_fix_username, menu);
             return super.onCreateOptionsMenu(menu);
@@ -62,25 +60,24 @@ public class PhotoActivity extends BaseActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if(item.getItemId() == R.id.icon) {
-            if(mDownloaded == null) {
+        if (item.getItemId() == R.id.icon) {
+            if (mDownloaded == null) {
                 Toast.makeText(this, "正在下载，请稍后保存！", Toast.LENGTH_SHORT).show();
                 return true;
             }
 
             File path = Environment.getExternalStorageDirectory();
             File dir = new File(path, "RongCloud/Image");
-            if(!dir.exists())
+            if (!dir.exists())
                 dir.mkdirs();
 
-            File from = new File(mDownloaded.getPath());
-            String name = from.getName() + ".jpg";
+            String name = new File(mDownloaded.getPath()).getName() + ".jpg";
             File to = new File(dir.getAbsolutePath(), name);
-            if(to.exists()) {
-                Toast.makeText(this, "文件保存成功！", Toast.LENGTH_SHORT).show();
+            if (to.exists()) {
+                Toast.makeText(this, "文件保存至" + to.getAbsolutePath(), Toast.LENGTH_SHORT).show();
                 return true;
             }
-            copyFile(from.getAbsolutePath(), to.getAbsolutePath());
+            copyFile(mDownloaded.toString(), to.getAbsolutePath());
         }
         return super.onOptionsItemSelected(item);
     }
@@ -94,19 +91,18 @@ public class PhotoActivity extends BaseActionBarActivity {
                 InputStream inStream = new FileInputStream(oldPath);
                 FileOutputStream fs = new FileOutputStream(newPath);
                 byte[] buffer = new byte[1444];
-                while ( (byteread = inStream.read(buffer)) != -1) {
+                while ((byteread = inStream.read(buffer)) != -1) {
                     bytesum += byteread;
                     System.out.println(bytesum);
                     fs.write(buffer, 0, byteread);
                 }
                 inStream.close();
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Toast.makeText(this, "文件保存出错！", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         } finally {
-            Toast.makeText(this, "文件保存成功！", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "文件保存至" + newPath, Toast.LENGTH_SHORT).show();
         }
     }
 

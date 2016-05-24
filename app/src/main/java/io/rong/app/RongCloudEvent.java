@@ -1,15 +1,10 @@
 package io.rong.app;
 
-import android.annotation.TargetApi;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -31,17 +26,16 @@ import io.rong.app.ui.activity.PhotoActivity;
 import io.rong.app.ui.activity.RealTimeLocationActivity;
 import io.rong.app.ui.activity.SOSOLocationActivity;
 import io.rong.app.ui.widget.WinToast;
-import io.rong.app.utils.Constants;
 import io.rong.imkit.RongContext;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.model.GroupUserInfo;
 import io.rong.imkit.model.UIConversation;
+import io.rong.imkit.utils.StringUtils;
 import io.rong.imkit.widget.AlterDialogFragment;
 import io.rong.imkit.widget.provider.CameraInputProvider;
 import io.rong.imkit.widget.provider.ImageInputProvider;
 import io.rong.imkit.widget.provider.InputProvider;
 import io.rong.imkit.widget.provider.TextInputProvider;
-import io.rong.imkit.widget.provider.VoIPInputProvider;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.location.RealTimeLocationConstant;
 import io.rong.imlib.location.message.RealTimeLocationStartMessage;
@@ -51,6 +45,7 @@ import io.rong.imlib.model.Group;
 import io.rong.imlib.model.Message;
 import io.rong.imlib.model.MessageContent;
 import io.rong.imlib.model.UserInfo;
+import io.rong.message.CommandMessage;
 import io.rong.message.ContactNotificationMessage;
 import io.rong.message.DiscussionNotificationMessage;
 import io.rong.message.ImageMessage;
@@ -61,7 +56,9 @@ import io.rong.message.PublicServiceRichContentMessage;
 import io.rong.message.RichContentMessage;
 import io.rong.message.TextMessage;
 import io.rong.message.VoiceMessage;
-import io.rong.notification.PushNotificationMessage;
+
+//import io.rong.imkit.widget.provider.CameraInputProvider;
+//import io.rong.imkit.widget.provider.VoIPInputProvider;
 
 //import io.rong.imkit.widget.provider.VoIPInputProvider;
 
@@ -87,7 +84,7 @@ import io.rong.notification.PushNotificationMessage;
  */
 public final class RongCloudEvent implements RongIMClient.OnReceiveMessageListener, RongIM.OnSendMessageListener,
         RongIM.UserInfoProvider, RongIM.GroupInfoProvider, RongIM.ConversationBehaviorListener,
-        RongIMClient.ConnectionStatusListener, RongIM.LocationProvider, RongIMClient.OnReceivePushMessageListener, RongIM.ConversationListBehaviorListener,
+        RongIMClient.ConnectionStatusListener, RongIM.LocationProvider, RongIM.ConversationListBehaviorListener,
         ApiCallback, Handler.Callback, RongIM.GroupUserInfoProvider {
 
     private static final String TAG = RongCloudEvent.class.getSimpleName();
@@ -126,6 +123,7 @@ public final class RongCloudEvent implements RongIMClient.OnReceiveMessageListen
         mContext = context;
         initDefaultListener();
         mHandler = new Handler(this);
+        setOtherListener();
     }
 
     @Override
@@ -172,8 +170,8 @@ public final class RongCloudEvent implements RongIMClient.OnReceiveMessageListen
      */
     public void setOtherListener() {
 
-        RongIM.getInstance().getRongIMClient().setOnReceiveMessageListener(this);//设置消息接收监听器。
-        RongIM.getInstance().getRongIMClient().setConnectionStatusListener(this);//设置连接状态监听器。
+        RongIM.setOnReceiveMessageListener(this);//设置消息接收监听器。
+        RongIM.setConnectionStatusListener(this);//设置连接状态监听器。
 
         TextInputProvider textInputProvider = new TextInputProvider(RongContext.getInstance());
         RongIM.setPrimaryInputProvider(textInputProvider);
@@ -181,80 +179,24 @@ public final class RongCloudEvent implements RongIMClient.OnReceiveMessageListen
 //        扩展功能自定义
         InputProvider.ExtendProvider[] provider = {
                 new ImageInputProvider(RongContext.getInstance()),//图片
-                new CameraInputProvider(RongContext.getInstance()),//相机
+//                new CameraInputProvider(RongContext.getInstance()),//相机
                 new RealTimeLocationInputProvider(RongContext.getInstance()),//地理位置
-                new VoIPInputProvider(RongContext.getInstance()),// 语音通话
         };
 
         InputProvider.ExtendProvider[] provider1 = {
                 new ImageInputProvider(RongContext.getInstance()),//图片
-                new CameraInputProvider(RongContext.getInstance()),//相机
+//                new CameraInputProvider(RongContext.getInstance()),//相机
                 new RealTimeLocationInputProvider(RongContext.getInstance()),//地理位置
                 new ContactsProvider(RongContext.getInstance()),//通讯录
         };
 
         RongIM.resetInputExtensionProvider(Conversation.ConversationType.PRIVATE, provider);
-        RongIM.getInstance().resetInputExtensionProvider(Conversation.ConversationType.DISCUSSION, provider1);
-        RongIM.getInstance().resetInputExtensionProvider(Conversation.ConversationType.GROUP, provider1);
-        RongIM.getInstance().resetInputExtensionProvider(Conversation.ConversationType.CUSTOMER_SERVICE, provider1);
-        RongIM.getInstance().resetInputExtensionProvider(Conversation.ConversationType.CHATROOM, provider1);
+        RongIM.resetInputExtensionProvider(Conversation.ConversationType.DISCUSSION, provider1);
+        RongIM.resetInputExtensionProvider(Conversation.ConversationType.GROUP, provider1);
+        RongIM.resetInputExtensionProvider(Conversation.ConversationType.CUSTOMER_SERVICE, provider1);
+        RongIM.resetInputExtensionProvider(Conversation.ConversationType.CHATROOM, provider1);
     }
 
-    /**
-     * 自定义 push 通知。
-     *
-     * @param msg
-     * @return
-     */
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    @Override
-    public boolean onReceivePushMessage(PushNotificationMessage msg) {
-
-        msg.getObjectName();//判断消息类型
-        Log.d(TAG, "onReceived-onPushMessageArrive:" + msg.getPushContent());
-
-        Intent intent = new Intent();
-        Uri uri;
-
-        intent.setAction(Intent.ACTION_VIEW);
-
-        Conversation.ConversationType conversationType = msg.getConversationType();
-
-        uri = Uri.parse("rong://" + RongContext.getInstance().getPackageName()).buildUpon().appendPath("conversationlist").build();
-        intent.setData(uri);
-        Log.d(TAG, "onPushMessageArrive-url:" + uri.toString());
-
-        Notification notification = null;
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(RongContext.getInstance(), 0,
-                intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        if (android.os.Build.VERSION.SDK_INT < 11) {
-            notification = new Notification(RongContext.getInstance().getApplicationInfo().icon, "自定义 notification", System.currentTimeMillis());
-
-            notification.setLatestEventInfo(RongContext.getInstance(), "自定义 title", "这是 Content:" + msg.getObjectName(), pendingIntent);
-            notification.flags = Notification.FLAG_AUTO_CANCEL;
-            notification.defaults = Notification.DEFAULT_SOUND;
-        } else {
-
-            notification = new Notification.Builder(RongContext.getInstance())
-                    .setLargeIcon(getAppIcon())
-                    .setSmallIcon(R.drawable.ic_rongcloud)
-                    .setTicker("自定义 notification")
-                    .setContentTitle("自定义 title")
-                    .setContentText("这是 Content:" + msg.getObjectName())
-                    .setContentIntent(pendingIntent)
-                    .setAutoCancel(true)
-                    .setDefaults(Notification.DEFAULT_ALL).build();
-
-        }
-
-        NotificationManager nm = (NotificationManager) RongContext.getInstance().getSystemService(RongContext.getInstance().NOTIFICATION_SERVICE);
-
-        nm.notify(0, notification);
-
-        return true;
-    }
 
     private Bitmap getAppIcon() {
         BitmapDrawable bitmapDrawable;
@@ -311,6 +253,14 @@ public final class RongCloudEvent implements RongIMClient.OnReceiveMessageListen
             DiscussionNotificationMessage discussionNotificationMessage = (DiscussionNotificationMessage) messageContent;
             Log.d(TAG, "onReceived-discussionNotificationMessage:getExtra;" + discussionNotificationMessage.getOperator());
             setDiscussionName(message.getTargetId());
+        } else if (messageContent instanceof CommandMessage) {
+            CommandMessage commandMessage = (CommandMessage) messageContent;
+            if (commandMessage.getData().equals("jejddsfdsdewxfe")) {
+
+                DemoContext.getInstance().setGroupUserinfoByGroupId(message.getTargetId(), commandMessage.getUserInfo().getUserId(), commandMessage.getUserInfo().getName());
+
+                RongIM.getInstance().refreshGroupUserInfoCache(new GroupUserInfo(message.getTargetId(), commandMessage.getUserInfo().getUserId(), commandMessage.getUserInfo().getName()));
+            }
         } else {
             Log.d(TAG, "onReceived-其他消息，自己来判断处理");
         }
@@ -328,21 +278,19 @@ public final class RongCloudEvent implements RongIMClient.OnReceiveMessageListen
      */
     private void setDiscussionName(String targetId) {
 
-        if (RongIM.getInstance() != null && RongIM.getInstance().getRongIMClient() != null) {
-            RongIM.getInstance().getRongIMClient().getDiscussion(targetId, new RongIMClient.ResultCallback<Discussion>() {
-                @Override
-                public void onSuccess(Discussion discussion) {
+        RongIM.getInstance().getDiscussion(targetId, new RongIMClient.ResultCallback<Discussion>() {
+            @Override
+            public void onSuccess(Discussion discussion) {
 
-                    RongIM.getInstance().refreshDiscussionCache(discussion);
-                    Log.i(TAG, "------discussion.getName---" + discussion.getName());
-                }
+                RongIM.getInstance().refreshDiscussionCache(discussion);
+                Log.i(TAG, "------discussion.getName---" + discussion.getName());
+            }
 
-                @Override
-                public void onError(RongIMClient.ErrorCode e) {
+            @Override
+            public void onError(RongIMClient.ErrorCode e) {
 
-                }
-            });
-        }
+            }
+        });
     }
 
     /**
@@ -385,6 +333,9 @@ public final class RongCloudEvent implements RongIMClient.OnReceiveMessageListen
             } else if (sentMessageErrorCode == RongIM.SentMessageErrorCode.REJECTED_BY_BLACKLIST) {//你在他的黑名单中
                 WinToast.toast(mContext, "你在对方的黑名单中");
             }
+//            else if (sentMessageErrorCode == RongIM.SentMessageErrorCode.NOT_FOLLOWED) {//未关注此公众号
+//                WinToast.toast(mContext, "未关注此公众号");
+//            }
         }
 
         MessageContent messageContent = message.getContent();
@@ -741,15 +692,19 @@ public final class RongCloudEvent implements RongIMClient.OnReceiveMessageListen
         return false;
     }
 
+
     @Override
     public GroupUserInfo getGroupUserInfo(String groupId, String userId) {
 
-        String currentUserId = DemoContext.getInstance().getSharedPreferences().getString(Constants.APP_USER_ID, Constants.DEFAULT);
-        if (userId.equals(currentUserId)) {
-            GroupUserInfo groupUserInfo = new GroupUserInfo("49", "22830", "hehe");
-            RongIM.getInstance().refreshGroupUserInfoCache(groupUserInfo);
-            return groupUserInfo;
+        if (DemoContext.getInstance().getGroupUserInfoMap() == null)
+            return null;
+
+        String key = StringUtils.getKey(groupId, userId);
+        GroupUserInfo groupUserInfo = DemoContext.getInstance().getGroupUserInfoMap().get(key);
+        if (groupUserInfo == null) {
+            return null;
         }
-        return null;
+
+        return groupUserInfo;
     }
 }
