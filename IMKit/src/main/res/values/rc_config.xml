@@ -19,16 +19,4 @@
     <!-- 是否开启，在会话界面下拉时，拉取云端历史消息 -->
     <!-- 此功能要开通对应服务器，才可使用-->
     <bool name="rc_enable_get_remote_history_message">true</bool>
-    
-     <!--设置语音消息的码率 (单位 bps)-->
-    <integer name="rc_audio_encoding_bit_rate">7950</integer>
-
-    <!--原图压缩比例-->
-    <integer name="rc_image_quality">85</integer>
-    <!--原图压缩宽、高-->
-    <integer name="rc_image_size">960</integer>
-    <!-- 设置发送输入状态 -->
-    <bool name="rc_typing_status">true</bool>
-    <!-- 设置已读回执 -->
-    <bool name="rc_read_receipt">true</bool>
 </resources>

@@ -14,8 +14,9 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 
 import io.rong.app.R;
-import io.rong.imageloader.core.ImageLoader;
 import io.rong.imkit.tools.PhotoFragment;
+import io.rong.imlib.model.Message;
+import io.rong.message.ImageMessage;
 
 public class PhotoActivity extends BaseActionBarActivity {
     PhotoFragment mPhotoFragment;
@@ -28,12 +29,14 @@ public class PhotoActivity extends BaseActionBarActivity {
         setContentView(R.layout.de_ac_photo);
 
         mPhotoFragment = (PhotoFragment) getSupportFragmentManager().findFragmentById(R.id.photo_fragment);
-        Uri uri = getIntent().getParcelableExtra("photo");
-        Uri thumbUri = getIntent().getParcelableExtra("thumbnail");
+
+        Message message = getIntent().getParcelableExtra("message");
+        ImageMessage imageMessage = (ImageMessage) message.getContent();
+        Uri uri = imageMessage.getLocalUri() == null ? imageMessage.getRemoteUri() : imageMessage.getLocalUri();
 
         mUri = uri;
         if (uri != null)
-            mPhotoFragment.initPhoto(uri, thumbUri, new PhotoFragment.PhotoDownloadListener() {
+            mPhotoFragment.initPhoto(message, new PhotoFragment.PhotoDownloadListener() {
                 @Override
                 public void onDownloaded(Uri uri) {
                     mDownloaded = uri;
