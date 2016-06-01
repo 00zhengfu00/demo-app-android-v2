@@ -508,13 +508,8 @@ public final class RongCloudEvent implements RongIMClient.OnReceiveMessageListen
             Log.e(TAG, "----RichContentMessage-------");
 
         } else if (message.getContent() instanceof ImageMessage) {
-            ImageMessage imageMessage = (ImageMessage) message.getContent();
             Intent intent = new Intent(context, PhotoActivity.class);
-
-            intent.putExtra("photo", imageMessage.getLocalUri() == null ? imageMessage.getRemoteUri() : imageMessage.getLocalUri());
-            if (imageMessage.getThumUri() != null)
-                intent.putExtra("thumbnail", imageMessage.getThumUri());
-
+            intent.putExtra("message", message);
             context.startActivity(intent);
         } else if (message.getContent() instanceof PublicServiceMultiRichContentMessage) {
             Log.e(TAG, "----PublicServiceMultiRichContentMessage-------");
