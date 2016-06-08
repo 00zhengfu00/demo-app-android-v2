@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
     <io.rong.photoview.PhotoView
-        android:id="@+id/photoView"
+        android:id="@+id/rc_photoView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
