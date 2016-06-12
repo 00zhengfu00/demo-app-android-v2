@@ -1,8 +1,8 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 19
@@ -32,4 +32,5 @@ android {
 
 dependencies {
     compile fileTree(dir: 'src/main/libs', include: ['*.jar'])
+    compile 'com.android.support:support-annotations:23.0.0'
 }
